@@ -1,5 +1,6 @@
 package userInterface;
 
+import lejos.geom.Point;
 import pointNavigation.GoToPoint;
 
 // "Lego_Printer" is what will be shown on the NXT's file selector
@@ -22,6 +23,7 @@ public class Lego_Printer {
 	
 	public Lego_Printer() {
 		arm = new GoToPoint();
+		arm.goToPointWithPen(new Point(50, 50), true);
 	}
 
 }

@@ -7,7 +7,7 @@ public class GoToPoint {
 	
 	Point currentPoint;
 	Point lastPoint;
-	double distToCenterOfPlate = 10.0; // in mm
+	double distToCenterOfPlate = 228; // in mm
 	double distToEndOfArm = distToCenterOfPlate;
 
 	public GoToPoint() {
