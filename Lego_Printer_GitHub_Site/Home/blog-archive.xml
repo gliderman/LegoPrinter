@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<rss xmlns:iweb="http://www.apple.com/iweb" version="2.0">
+  <channel>
+    <title>Home</title>
+    <link>http://gliderman.github.io/LegoPrinter/Lego_Printer_GitHub_Site/Home</link>
+    <description>Here is where I am going to be blogging about this printer.  I hope to add more to this, but for right now, this is what I have.
+
+This site was made in iWeb, so no, I did not hand-type all of this ;)</description>
+    <iweb:dateFormat>EEEE, MMMM d, y</iweb:dateFormat>
+    <iweb:baseURL>http://gliderman.github.io/LegoPrinter/Lego_Printer_GitHub_Site/Home</iweb:baseURL>
+    <iweb:maximumSummaryItems>5</iweb:maximumSummaryItems>
+  </channel>
+</rss>
