@@ -11,7 +11,7 @@ public class Lego_Printer {
 	}
 	
 	public Lego_Printer() {
-		// Changed the tests
+		
 	}
 
 }
