@@ -7,12 +7,16 @@ public class GoToPoint {
 	
 	Point currentPoint;
 	Point lastPoint;
-	double distToCenterOfPlate = 228; // in mm
+	double distToCenterOfPlate = 236; // in mm
 	double distToEndOfArm = distToCenterOfPlate;
+	
+	double returnValue;
+	double[] returnArray;
 
 	public GoToPoint() {
 		currentPoint	= new Point(0, 0);
 		lastPoint		= new Point(0, 0);
+		returnArray		= new double[3];
 		
 		// Stop motors
 		Motor.A.stop();
@@ -31,7 +35,7 @@ public class GoToPoint {
 	}
 	
 	public Point getCurrentPoint() {
-		return new Point(0, 0);
+		return currentPoint;
 	}
 	
 	private void setCurrentPoint(Point point) {
@@ -39,7 +43,7 @@ public class GoToPoint {
 	}
 	
 	public Point getLastPoint() {
-		return new Point(0, 0);
+		return lastPoint;
 		
 	}
 	
@@ -59,8 +63,12 @@ public class GoToPoint {
 			double[] angles = calculateAnglesForPoint(point);
 			angles[0] = correctAngleForPlate(angles[0], point);
 			
+			angles[1] = (angles[1] * 3);
+			
+			System.out.println(angles[0]);
+			
 			Motor.A.rotateTo((int) angles[0], true);
-			Motor.B.rotateTo(-((int) angles[1]), false);
+			Motor.B.rotateTo((int) angles[1], false);
 			
 			// Lower pen
 			if (withLift) {
@@ -79,43 +87,41 @@ public class GoToPoint {
 	 */
 	private double[] calculateAnglesForPoint(Point p) {
 		double centerToPoint = calculateDistFromCenterToPoint(p);
-		double[] angles = {0.0, 0.0, 0.0};
 		
-		angles[0] = findAngleForTriangleLengths(distToEndOfArm,
+		returnArray[0] = findAngleForTriangleLengths(distToEndOfArm,
 				distToCenterOfPlate, centerToPoint);
-		angles[1] = findAngleForTriangleLengths(centerToPoint,
+		returnArray[1] = findAngleForTriangleLengths(centerToPoint,
 				distToCenterOfPlate, distToEndOfArm);
-		angles[2] = findAngleForTriangleLengths(distToCenterOfPlate,
+		returnArray[2] = findAngleForTriangleLengths(distToCenterOfPlate,
 				centerToPoint, distToEndOfArm);
 		
-		return angles;
+		return returnArray;
 	}
 	
 	private double findAngleForTriangleLengths(double sideOpposite,
 			double otherSide, double anotherSide) {
 		
 		double theOtherSidesMultiplied = (2 * otherSide * anotherSide);
+		
 		double sidesAddedAndSquared = (Math.pow(otherSide, 2) +
 				Math.pow(anotherSide, 2) - Math.pow(sideOpposite, 2));
 		
-		double neededAngle =
-				Math.acos(theOtherSidesMultiplied/sidesAddedAndSquared);
+		double divided = (sidesAddedAndSquared/theOtherSidesMultiplied);
 		
-		return neededAngle;
+		returnValue =
+				Math.acos(divided);
+		
+		return returnValue;
 	}
-	
+
 	private double calculateDistFromCenterToPoint(Point p) {
-		double length = Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2));
-		return length;
+		returnValue = Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2));
+		return returnValue;
 	}
 	
 	private double correctAngleForPlate(double originalAngle, Point p) {
 		// If the point is with completely positive coordinates,
 		// then it leaves the angle alone.
-		
-		if ((p.x < 0) && (p.y >= 0)) {
-			originalAngle += 270;
-		}
 		
 		if ((p.x >=0) && (p.y < 0)) {
 			originalAngle += 90;
@@ -124,8 +130,12 @@ public class GoToPoint {
 		if ((p.x < 0) && (p.y < 0)) {
 			originalAngle += 180;
 		}
+
+		if ((p.x < 0) && (p.y >= 0)) {
+			originalAngle += 270;
+		}
 		
-		return originalAngle;
+		return (originalAngle*20);
 	}
 	
 }
