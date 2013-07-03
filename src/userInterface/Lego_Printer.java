@@ -2,6 +2,7 @@ package userInterface;
 
 import buildFiles.*;
 import lejos.geom.Point;
+import lejos.nxt.Button;
 import lejos.util.Delay;
 import pointNavigation.GoToPoint;
 
@@ -25,9 +26,9 @@ public class Lego_Printer {
 	
 	public Lego_Printer() {
 		arm = new GoToPoint();
-		new Circles();
-//		arm.goToPointWithPen(new Point(50, 50), true);
-		Delay.msDelay(5000);
+//		new Circles();
+		arm.goToPointWithPen(new Point(50, 50), true);
+		Button.ENTER.waitForPressAndRelease();
 	}
 
 }

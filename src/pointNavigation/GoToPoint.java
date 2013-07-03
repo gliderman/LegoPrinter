@@ -7,7 +7,7 @@ public class GoToPoint {
 	
 	Point currentPoint;
 	Point lastPoint;
-	double distToCenterOfPlate = 236; // in mm
+	double distToCenterOfPlate = 240; // in mm
 	double distToEndOfArm = distToCenterOfPlate;
 	
 	double returnValue;
@@ -65,10 +65,10 @@ public class GoToPoint {
 			
 			angles[1] = (angles[1] * 3);
 			
-			System.out.println(angles[0]);
+//			System.out.println(angles[0]);
 			
 			Motor.A.rotateTo((int) angles[0], true);
-			Motor.B.rotateTo((int) angles[1], false);
+			Motor.B.rotateTo(-((int) angles[1]), false);
 			
 			// Lower pen
 			if (withLift) {
@@ -100,17 +100,19 @@ public class GoToPoint {
 	
 	private double findAngleForTriangleLengths(double sideOpposite,
 			double otherSide, double anotherSide) {
-		
+//		System.out.println("Start");
+//		System.out.println(sideOpposite);
+//		System.out.println(otherSide);
+//		System.out.println(anotherSide);
 		double theOtherSidesMultiplied = (2 * otherSide * anotherSide);
-		
+//		System.out.println("Mul" + theOtherSidesMultiplied);
 		double sidesAddedAndSquared = (Math.pow(otherSide, 2) +
 				Math.pow(anotherSide, 2) - Math.pow(sideOpposite, 2));
-		
+//		System.out.println("Add" + sidesAddedAndSquared);
 		double divided = (sidesAddedAndSquared/theOtherSidesMultiplied);
-		
-		returnValue =
-				Math.acos(divided);
-		
+		System.out.println("Div" + divided);
+		returnValue = (Math.toDegrees(Math.acos(divided)));
+		System.out.println("Tot" + returnValue);
 		return returnValue;
 	}
 
