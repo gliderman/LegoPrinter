@@ -3,6 +3,16 @@ package pointNavigation;
 import lejos.geom.Point;
 import lejos.nxt.Motor;
 
+/**
+ * This class is for moving the print head
+ * to different points and does all the
+ * calculations for this. It will eventually
+ * be able to draw straight lines and draw
+ * curves. Eventually...
+ * 
+ * @author Gliderman
+ *
+ */
 public class GoToPoint {
 	
 	Point currentPoint;
@@ -13,6 +23,11 @@ public class GoToPoint {
 	double returnValue;
 	double[] returnArray;
 
+	/**
+	 * Constructor, sets defaults to points, and
+	 * resets the motors, set thier speeds and
+	 * stops them if they are moving.
+	 */
 	public GoToPoint() {
 		currentPoint	= new Point(0, 0);
 		lastPoint		= new Point(0, 0);
@@ -34,25 +49,48 @@ public class GoToPoint {
 		Motor.C.resetTachoCount();
 	}
 	
+	/**
+	 * Get the current point.
+	 * @return
+	 */
 	public Point getCurrentPoint() {
 		return currentPoint;
 	}
 	
+	/**
+	 * Set the current point.
+	 * @param point
+	 */
 	private void setCurrentPoint(Point point) {
 		currentPoint = point;
 	}
 	
+	/**
+	 * Get the last point.
+	 * @return
+	 */
 	public Point getLastPoint() {
 		return lastPoint;
 		
 	}
 	
+	/**
+	 * Set the last point.
+	 * @param point
+	 */
 	private void setLastPoint(Point point) {
 		lastPoint = point;
 	}
 	
+	/**
+	 * This is the method to be used most often, it will
+	 * call the methods to do the calculations for the
+	 * positioning and also run the motors.
+	 * @param point
+	 * @param withLift
+	 */
 	public void goToPointWithPen(Point point, boolean withLift) {
-		if (point == currentPoint) {
+		if (point == getCurrentPoint()) {
 			// Why should it move?
 		} else {
 			// Lift pen
@@ -60,20 +98,24 @@ public class GoToPoint {
 				Motor.C.rotateTo(-720);
 			}
 			
+			// Get angles
 			double[] angles = calculateAnglesForPoint(point);
 			angles[0] = correctAngleForPlate(angles[0], point);
 			
 			angles[1] = (angles[1] * 3);
 			
 //			System.out.println(angles[0]);
-			
-			Motor.A.rotateTo((int) angles[0], true);
+
+			// Move motors
 			Motor.B.rotateTo(-((int) angles[1]), false);
+			Motor.A.rotateTo((int) angles[0], false);
 			
 			// Lower pen
 			if (withLift) {
 				Motor.C.rotateTo(0);
 			}
+			setLastPoint(currentPoint);
+			setCurrentPoint(point);
 		}
 	}
 	
@@ -98,29 +140,49 @@ public class GoToPoint {
 		return returnArray;
 	}
 	
+	/**
+	 * Uses SSS for finding the angles (in degrees) for a set
+	 * of 3 sides (hence SSS).
+	 * @param sideOpposite
+	 * @param otherSide
+	 * @param anotherSide
+	 * @return returnValue
+	 */
 	private double findAngleForTriangleLengths(double sideOpposite,
 			double otherSide, double anotherSide) {
-//		System.out.println("Start");
-//		System.out.println(sideOpposite);
-//		System.out.println(otherSide);
-//		System.out.println(anotherSide);
+		
 		double theOtherSidesMultiplied = (2 * otherSide * anotherSide);
-//		System.out.println("Mul" + theOtherSidesMultiplied);
+		
 		double sidesAddedAndSquared = (Math.pow(otherSide, 2) +
 				Math.pow(anotherSide, 2) - Math.pow(sideOpposite, 2));
-//		System.out.println("Add" + sidesAddedAndSquared);
+		
 		double divided = (sidesAddedAndSquared/theOtherSidesMultiplied);
-		System.out.println("Div" + divided);
+		
 		returnValue = (Math.toDegrees(Math.acos(divided)));
-		System.out.println("Tot" + returnValue);
+		
 		return returnValue;
 	}
 
+	/**
+	 * This method uses the pythagorean theorem to find the
+	 * distance between the center of the plate and the point.
+	 * @param p
+	 * @return returnValue
+	 */
 	private double calculateDistFromCenterToPoint(Point p) {
 		returnValue = Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2));
 		return returnValue;
 	}
 	
+	/**
+	 * This checks in which quadrant the point is in and
+	 * adds to the rotation the coresponding amount for it
+	 * to get to the correct spot. Also multiplies by 20 for
+	 * the gear ratio.
+	 * @param originalAngle
+	 * @param p
+	 * @return
+	 */
 	private double correctAngleForPlate(double originalAngle, Point p) {
 		// If the point is with completely positive coordinates,
 		// then it leaves the angle alone.
